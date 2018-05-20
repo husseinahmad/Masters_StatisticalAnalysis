@@ -1,0 +1,291 @@
+---
+title: "Week 1 - Homework"
+author: "STAT 420, Summer 2018, Unger"
+date: ''
+output:
+  html_document: 
+    toc: yes
+  pdf_document: default
+urlcolor: cyan
+---
+
+***
+Student Name: Hussein Ahmed Elmessilhy
+NetID: hae2
+
+## Exercise 1 (Subsetting and Statistics)
+
+For this exercise, we will use the `msleep` dataset from the `ggplot2` package.
+
+**(a)** Install and load the `ggplot2` package. **Do not** include the installation command in your `.Rmd` file. (If you do it will install the package every time you knit your file.) **Do** include the command to load the package into your environment.
+```{r cars}
+library(ggplot2)
+```
+
+
+**(b)** Note that this dataset is technically a `tibble`, not a data frame. How many observations are in this dataset? How many variables? What are the observations in this dataset?
+
+**Answer**: As viewed in the tibble of the dataset below, there are 83 observations and 11 variables. The observations represent animals.
+```{r}
+#msleep <- ggplot2::msleep
+msleep
+```
+
+
+**(c)** What is the mean hours of REM sleep of individuals in this dataset?
+
+**Answer**: 
+```{r}
+mean(msleep$sleep_rem, na.rm = TRUE)
+```
+
+
+**(d)** What is the standard deviation of brain weight of individuals in this dataset?
+
+**Answer**: 
+```{r}
+sd(msleep$brainwt, na.rm = TRUE)
+```
+
+
+**(e)** Which observation (provide the `name`) in this dataset gets the most REM sleep?
+
+**Answer**: 
+```{r}
+msleep[which.max(msleep$sleep_rem),]$name
+```
+
+
+**(f)** What is the average bodyweight of carnivores in this dataset?
+
+**Answer**: 
+```{r}
+mean(msleep[msleep$vore == "carni",]$sleep_rem, na.rm = TRUE)
+```
+***
+
+## Exercise 2 (Plotting)
+
+For this exercise, we will use the `birthwt` dataset from the `MASS` package.
+
+**(a)** Note that this dataset is a data frame and all of the variables are numeric. How many observations are in this dataset? How many variables? What are the observations in this dataset?
+
+**Answer**: There are 189 observations and 10 variables in this dataset, the observations represent infant birth weights along with the risk factors associated with it 
+```{r}
+library(MASS)
+str(birthwt)
+```
+
+
+**(b)** Create a scatter plot of birth weight (y-axis) vs mother's weight before pregnancy (x-axis). Use a non-default color for the points. (Also, be sure to give the plot a title and label the axes appropriately.) Based on the scatter plot, does there seem to be a relationship between the two variables? Briefly explain.
+
+**Answer**: There's no clear relationship between the two variables, and that's because some mothers have above average weight and have below average baby and vice versa. The graph looks more like noise.
+```{r}
+plot(bwt~lwt, data = birthwt,
+     xlab = "Mother last weight",
+     ylab = "Baby Birth Weight",
+     main = "Relationship between baby and mother weight",
+     col = "orange")
+```
+
+
+**(c)** Create a scatter plot of birth weight (y-axis) vs mother's age (x-axis). Use a non-default color for the points. (Also, be sure to give the plot a title and label the axes appropriately.) Based on the scatter plot, does there seem to be a relationship between the two variables? Briefly explain.
+
+**Answer**: Although there's no clear relationship beween the mother age and the baby weight, but a lot of the anomalies (very low weight or very high weight) are associated with older moms (above 25)  
+```{r}
+plot(bwt~age, data = birthwt,
+     xlab = "Mother age",
+     ylab = "Baby Birth Weight",
+     main = "Relationship between baby weight and mother age",
+     col = "orange")
+```
+
+
+**(d)** Create side-by-side boxplots for birth weight grouped by smoking status. Use non-default colors for the plot. (Also, be sure to give the plot a title and label the axes appropriately.) Based on the boxplot, does there seem to be a difference in birth weight for mothers who smoked? Briefly explain.
+
+**Answer**: There's some difference between the mothers who smoke and who haven't, mothers who smoke seem to have babies with a bit lower weight than those who haven't as the median, 2nd, and 3rd percentiles are lower. Difference is not that big though.
+```{r}
+boxplot(bwt~smoke, data = birthwt,
+     xlab = "Mother smoke status",
+     ylab = "Baby Birth Weight",
+     main = "Relationship between baby weight and mother smoke status",
+     col = "orange",
+     names = c("Non-Smoker","Smoker"))
+```
+
+
+***
+
+## Exercise 3 (Importing Data, More Plotting)
+
+For this exercise we will use the data stored in [`nutrition-2018.csv`](nutrition-2018.csv). It contains the nutritional values per serving size for a large variety of foods as calculated by the USDA in 2018. It is a cleaned version totaling 5956 observations and is current as of April 2018.
+
+```{r}
+setwd(".\\")
+food <- read.csv(".\\nutrition-2018.csv")
+```
+
+The variables in the dataset are:
+
+- `ID` 
+- `Desc` - short description of food
+- `Water` - in grams
+- `Calories` - in kcal
+- `Protein` - in grams
+- `Fat` - in grams
+- `Carbs` - carbohydrates, in grams
+- `Fiber` - in grams
+- `Sugar` - in grams
+- `Calcium` - in milligrams
+- `Potassium` - in milligrams
+- `Sodium` - in milligrams
+- `VitaminC` - vitamin C, in milligrams
+- `Chol` - cholesterol, in milligrams
+- `Portion` - description of standard serving size used in analysis
+
+**(a)** Create a histogram of `Calories`. Do not modify `R`'s default bin selection. Make the plot presentable. Describe the shape of the histogram. Do you notice anything unusual?
+
+**Answer**: Most of the observed foods have less calories, i.e., foods with less calories are more common than foods with higher calories
+```{r}
+hist(food$Calories,
+     xlab = "Amount of calories",
+     ylab = "Frequency",
+     main = "Histogram of calories in different food",
+     col = "orange")
+```
+
+**(b)** Create a scatter plot of calories (y-axis) vs protein (x-axis). Make the plot presentable. Do you notice any trends? Do you think that knowing only the protein content of a food, you could make a good prediction of the calories in the food?
+
+**Answer**: There's a clear trend in the data, the higher the protein, the less variant the food calories, this means that it's easy to predict the calories a food has given it has a high protein, however, a food with low or no protein could be with high o rlow calories. Therefore, we can't always predict the calories given the protein.
+
+```{r}
+plot(Calories~Protein, data = food,
+     xlab = "Protein",
+     ylab = "Calories",
+     main = "Relationship between Protein and Calories",
+     col = "orange")
+```
+
+
+**(c)** Create a scatter plot of `Calories` (y-axis) vs `4 * Protein + 4 * Carbs + 9 * Fat` (x-axis). Make the plot presentable. You will either need to add a new variable to the data frame, or use the `I()` function in your formula in the call to `plot()`. If you are at all familiar with nutrition, you may realize that this formula calculates the calorie count based on the protein, carbohydrate, and fat values. You'd expect then that the result here is a straight line. Is it? If not, can you think of any reasons why it is not?
+
+**Answer**: The result is not strictly straight line, however, it's close. I can think of a reason why it's not a straight line, maybe the formula is not 100% accurate, for example, maybe fiber, which is a different kind of carbs, has different number of calories per gram. 
+
+```{r}
+plot(Calories ~ I(4 * Protein + 4 * Carbs + 9 * Fat), data = food,
+     xlab = "Mixed food formula",
+     ylab = "Calories",
+     main = "Relationship between Protein and Calories",
+     col = "orange")
+```
+
+
+***
+
+## Exercise 4 (Writing and Using Functions)
+
+For each of the following parts, use the following vectors:
+
+```{r}
+a = 1:10
+b = 10:1
+c = rep(1, times = 10)
+d = 2 ^ (1:10)
+```
+
+**(a)** Write a function called `sum_of_squares`.
+
+- Arguments:
+    - A vector of numeric data `x`
+- Output:
+    - The sum of the squares of the elements of the vector $\sum_{i = 1}^n x_i^2$
+    
+Provide your function, as well as the result of running the following code
+**Answer**: 
+
+```{r, eval = TRUE}
+sum_of_squares = function(x){
+  return(sum(x ^ 2))
+}
+
+sum_of_squares(x = a)
+
+sum_of_squares(x = c(c, d))
+```
+
+
+**(b)** Using only your function `sum_of_squares()`, `mean()`, `sqrt()`, and basic math operations such as `+` and `-`, calculate
+
+\[
+\sqrt{\frac{1}{n}\sum_{i = 1}^n (x_i - 0)^{2}}
+\]
+
+where the $x$ vector is `d` and the $y$ vector is `b`.
+
+**Answer**: 
+
+```{r, eval = TRUE}
+sqrt(mean(d) * sum_of_squares(d) * (1 / sum_of_squares(sqrt(d))) )
+```
+
+**(c)** Using only your function `sum_of_squares()`, `mean()`, `sqrt()`, and basic math operations such as `+` and `-`, calculate
+
+\[
+\sqrt{\frac{1}{n}\sum_{i = 1}^n (x_i - y_i)^{2}}
+\]
+
+where the $x$ vector is `a` and the $y$ vector is `b`.
+
+**Answer**: 
+
+```{r, eval = TRUE}
+sqrt(mean(a) * sum_of_squares(a - b) * (1 / sum_of_squares(sqrt(a))) )
+```
+
+***
+
+## Exercise 5 (More Writing and Using Functions)
+
+For each of the following parts, use the following vectors:
+
+```{r}
+set.seed(42)
+x = 1:100
+y = rnorm(1000)
+z = runif(150, min = 0, max = 1)
+```
+
+**(a)** Write a function called `list_extreme_values`.
+
+- Arguments:
+    - A vector of numeric data `x`
+    - A positive constant, `k`, with a default value of `2`
+- Output:
+    - A list with two elements:
+        - `small`, a vector of elements of `x` that are $k$ sample standard deviations less than the sample mean. That is, the observations that are smaller than $\bar{x} - k \cdot s$.
+        - `large`, a vector of elements of `x` that are $k$ sample standard deviations greater than the sample mean. That is, the observations that are larger than $\bar{x} + k \cdot s$.
+
+Provide your function, as well as the result of running the following code.
+
+**Answer**: 
+```{r, eval = TRUE}
+list_extreme_values = function(x, k = 2){
+  results = list(
+    small = x[x < mean(x) - (k * sd(x))],
+    large = x[x > mean(x) + (k * sd(x))]
+  )
+  return(results)
+}
+list_extreme_values(x = x, k = 1)
+list_extreme_values(x = y, k = 3)
+list_extreme_values(x = y, k = 2)
+list_extreme_values(x = z, k = 1.5)
+```
+
+
+**(b)** Using only your function `list_extreme_values()`, `mean()`, and basic list operations, calculate the mean of observations that are greater than 1.5 standard deviation above the mean in the vector `y`.
+
+**Answer**: 
+```{r, eval = TRUE}
+mean(list_extreme_values(y, 1.5)$large)
+```
