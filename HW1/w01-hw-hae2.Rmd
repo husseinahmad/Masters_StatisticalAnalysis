@@ -10,24 +10,23 @@ urlcolor: cyan
 ---
 
 ***
-Student Name: Hussein Ahmed Elmessilhy
-NetID: hae2
+**Student Name**: Hussein Ahmed Elmessilhy  
+**NetID**: hae2
 
 ## Exercise 1 (Subsetting and Statistics)
 
 For this exercise, we will use the `msleep` dataset from the `ggplot2` package.
 
 **(a)** Install and load the `ggplot2` package. **Do not** include the installation command in your `.Rmd` file. (If you do it will install the package every time you knit your file.) **Do** include the command to load the package into your environment.
-```{r cars}
+```{r}
 library(ggplot2)
 ```
 
 
 **(b)** Note that this dataset is technically a `tibble`, not a data frame. How many observations are in this dataset? How many variables? What are the observations in this dataset?
 
-**Answer**: As viewed in the tibble of the dataset below, there are 83 observations and 11 variables. The observations represent animals.
+**Answer**: As viewed in the tibble of the dataset below, there are 83 observations and 11 variables. The observations represent animals as mentioned in the documentation.
 ```{r}
-#msleep <- ggplot2::msleep
 msleep
 ```
 
@@ -60,7 +59,7 @@ msleep[which.max(msleep$sleep_rem),]$name
 
 **Answer**: 
 ```{r}
-mean(msleep[msleep$vore == "carni",]$sleep_rem, na.rm = TRUE)
+mean(msleep[msleep$vore == "carni",]$bodywt, na.rm = TRUE)
 ```
 ***
 
@@ -145,7 +144,9 @@ The variables in the dataset are:
 
 **(a)** Create a histogram of `Calories`. Do not modify `R`'s default bin selection. Make the plot presentable. Describe the shape of the histogram. Do you notice anything unusual?
 
-**Answer**: Most of the observed foods have less calories, i.e., foods with less calories are more common than foods with higher calories
+**Answer**: The histogram shape represents the frequency of different types of food in each calories range. Most of the observed food types have less calories, i.e., food types with less calories are more common than food types with higher calories. The frequency of food types is almost consistently decreasing with the increase of calories, however, there's something unusual around the 400 calories food types, there are a lot of them unlike the normal trend of the histogram. Also, the same anomaly exists with very high calories food types, there are relatively more of them than the normal trend.
+
+
 ```{r}
 hist(food$Calories,
      xlab = "Amount of calories",
@@ -156,7 +157,7 @@ hist(food$Calories,
 
 **(b)** Create a scatter plot of calories (y-axis) vs protein (x-axis). Make the plot presentable. Do you notice any trends? Do you think that knowing only the protein content of a food, you could make a good prediction of the calories in the food?
 
-**Answer**: There's a clear trend in the data, the higher the protein, the less variant the food calories, this means that it's easy to predict the calories a food has given it has a high protein, however, a food with low or no protein could be with high o rlow calories. Therefore, we can't always predict the calories given the protein.
+**Answer**: There's a trend in the data, the higher the protein the less variant the food calories, this means that it's possible to predict the calories a food has given it has a high protein (around 400 starting from 40). However, a food with low or no protein could be with high or low calories. Therefore, we can't always predict the calories given the protein.
 
 ```{r}
 plot(Calories~Protein, data = food,
@@ -169,13 +170,13 @@ plot(Calories~Protein, data = food,
 
 **(c)** Create a scatter plot of `Calories` (y-axis) vs `4 * Protein + 4 * Carbs + 9 * Fat` (x-axis). Make the plot presentable. You will either need to add a new variable to the data frame, or use the `I()` function in your formula in the call to `plot()`. If you are at all familiar with nutrition, you may realize that this formula calculates the calorie count based on the protein, carbohydrate, and fat values. You'd expect then that the result here is a straight line. Is it? If not, can you think of any reasons why it is not?
 
-**Answer**: The result is not strictly straight line, however, it's close. I can think of a reason why it's not a straight line, maybe the formula is not 100% accurate, for example, maybe fiber, which is a different kind of carbs, has different number of calories per gram. 
+**Answer**: The result is not strictly straight line, however, it's close. One reason why it's not a straight line, maybe the formula is not 100% accurate, for example, maybe some types of food have higher weights in its protein or carbs than others.  
 
 ```{r}
 plot(Calories ~ I(4 * Protein + 4 * Carbs + 9 * Fat), data = food,
      xlab = "Mixed food formula",
      ylab = "Calories",
-     main = "Relationship between Protein and Calories",
+     main = "Relationship between 4-4-9 formula and Calories",
      col = "orange")
 ```
 
@@ -201,6 +202,7 @@ d = 2 ^ (1:10)
     - The sum of the squares of the elements of the vector $\sum_{i = 1}^n x_i^2$
     
 Provide your function, as well as the result of running the following code
+
 **Answer**: 
 
 ```{r, eval = TRUE}
@@ -222,7 +224,7 @@ sum_of_squares(x = c(c, d))
 
 where the $x$ vector is `d` and the $y$ vector is `b`.
 
-**Answer**: 
+**Answer**: Trick here is to make use of mean, which is sum of vector elements over length, if we are able to provide sum of vector somehow, we can divide means over it to get inverse of length. Sum of squares can get us the sum when we apply square root to the elements.
 
 ```{r, eval = TRUE}
 sqrt(mean(d) * sum_of_squares(d) * (1 / sum_of_squares(sqrt(d))) )
