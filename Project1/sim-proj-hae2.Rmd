@@ -6,6 +6,7 @@ output:
   html_document: 
     toc: yes
   pdf_document: default
+  fig_caption: yes
 urlcolor: cyan
 ---
 
@@ -16,14 +17,20 @@ urlcolor: cyan
 **(a)** Introduction
 
 
-In this study, I am trying to prove that the significance of regression test is a good indicator of whether the regression model is relevant or not to the data in hand.
+In this study, I am trying to prove that the significance of regression test is a good indicator of whether a regression model is relevant or not to the data in hand.
 
-To do so, data will be simulated from two different true models, one of them their output is function of all the predictors, while the other one their output is not a function of the predictors. To make sure of the variability of data to test with, each true model will be used with different values of error variance to generate the data as well as many simulations.
+To do so, data will be simulated from two different true models, one of them its output is function of all the predictors, while the other one its output is not a function of the predictors. 
 
+To make sure of the variability of data to test with, each true model will be used with different values of error variance to generate the data, also, many simulations many simulations will be generated to assess the consistency of our observations.
+
+The two models follow the below equations: 
 \[
 Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \epsilon_i.
 \]
 
+$\beta$ parameters have values in the significant model, namely (3,1,1,1) for the beta values respectively, while the non-significant model has  $\beta_0$ equals to 3 while the others are 0.
+
+Other parameters we are considering are sample size equal to 25, and $\sigma$ values for the error in (1,5,10). Number of simulations to be used for each model-$\sigma$ combinations are 2500.
 
 
 **(b)** Methods
@@ -49,7 +56,6 @@ simulate_model = function(data, simulations, sigma, params){
   rSquared <- rep(0, simulations)
   betas <- matrix(0, nrow = simulations, ncol = length(params))
   se <- rep(0, simulations)
-  rmse <- rep(0, simulations)
   
   for (i in 1:simulations)
   {
@@ -61,7 +67,6 @@ simulate_model = function(data, simulations, sigma, params){
     fStats[i] <- model_summary$fstatistic[1]
     pVal[i] <- 1 - pf(model_summary$fstatistic[1], model_summary$fstatistic[2], model_summary$fstatistic[3])
     se[i] <- model_summary$sigma
-    rmse[i] <- sqrt(sum((data$y - model$fitted.values) ^ 2)/nrow(data))
   }
   
   result <- list()
@@ -87,25 +92,7 @@ study1_nonSignificant_10 <- simulate_model(study1_data, 2500, 10, c(3,0,0,0))
 
 **(c)** Results
 
-Our regression models significance tests was able to conclude a right decision (model is significant by rejecting the null hypotheses) in each of the significant models simulations per sigma equal to the following (based on alpha value equal to 0.05):
-
-- When sigma = 1 : `r  sum(study1_significant_1$pVal < 0.05) / 2500`
-
-- When sigma = 5 : `r  sum(study1_significant_5$pVal < 0.05) / 2500`
-
-- When sigma = 10 : `r  sum(study1_significant_10$pVal < 0.05) / 2500`
-
-On the other hand, the regression models in the non-signofocant models were able to conclude a right decision (fail to reject the null hypotheses) in each of the non-significant models simulations per sigma equal to the following (based on alpha value equal to 0.05):
-
-- When sigma = 1 : `r  sum(study1_nonSignificant_1$pVal > 0.05) / 2500`
-
-- When sigma = 5 : `r  sum(study1_nonSignificant_5$pVal > 0.05) / 2500`
-
-- When sigma = 10 : `r  sum(study1_nonSignificant_10$pVal > 0.05) / 2500`
-
-
-
-```{r}
+```{r figs1_1,fig.cap="\\label{fig:figs1_1}Figure 1.1: F statistic for Signigicant and non-significant simulations, as well as the true expected F distribution if the model is non-significant"}
 
 # Plotting charts for the f statistic
 
@@ -113,42 +100,42 @@ On the other hand, the regression models in the non-signofocant models were able
 par(mfrow=c(2,3))
 
 hist(study1_nonSignificant_1$fStats, prob = TRUE, breaks = 25, 
-     xlab = "F statistic when sigma is 1", main = "", border = "dodgerblue")
+     xlab = "F statistic", main = bquote("Non-significant model when" ~ sigma == .(1)), border = "dodgerblue")
 x <- seq(0, 100, length = 25)    
 curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
  col = "darkorange", add = TRUE, lwd = 3)
 
 
 hist(study1_nonSignificant_5$fStats, prob = TRUE, breaks = 25, 
-     xlab = "F statistic when sigma is 5", main = "", border = "dodgerblue")
+     xlab = "F statistic", main = bquote("Non-significant model when" ~ sigma == .(5)), border = "dodgerblue")
 x <- seq(0, 10, length = 25)    
 curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
  col = "darkorange", add = TRUE, lwd = 3)
 
 hist(study1_nonSignificant_10$fStats, prob = TRUE, breaks = 25, 
-     xlab = "F statistic when sigma is 10", main = "", border = "dodgerblue")
+     xlab = "F statistic", main = bquote("Non-significant model when" ~ sigma == .(10)), border = "dodgerblue")
 x <- seq(0, 10, length = 25)    
 curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
  col = "darkorange", add = TRUE, lwd = 3)
 
 
-#charts when the model is significant
+#charts for f statistic when the model is significant
 
 hist(study1_significant_1$fStats, prob = TRUE, breaks = 25, 
-     xlab = "F statistic when sigma is 1", main = "", border = "dodgerblue")
+     xlab = "F statistic", main = bquote("Significant model when" ~ sigma == .(1)), border = "dodgerblue")
 x <- seq(0, 10, length = 25)    
 curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
  col = "darkorange", add = TRUE, lwd = 3)
 
 
 hist(study1_significant_5$fStats, prob = TRUE, breaks = 25, 
-     xlab = "F statistic when sigma is 5", main = "", border = "dodgerblue")
+     xlab = "F statistic", main = bquote("Significant model when" ~ sigma == .(5)), border = "dodgerblue")
 x <- seq(0, 10, length = 25)    
 curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
  col = "darkorange", add = TRUE, lwd = 3)
 
 hist(study1_significant_10$fStats, prob = TRUE, breaks = 25, 
-     xlab = "F statistic when sigma is 10", main = "", border = "dodgerblue")
+     xlab = "F statistic", main = bquote("Significant model when" ~ sigma == .(10)), border = "dodgerblue")
 x <- seq(0, 10, length = 25)    
 curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
  col = "darkorange", add = TRUE, lwd = 3)
@@ -158,7 +145,7 @@ curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
 
 
 
-```{r}
+```{r figs1_2,fig.cap="\\label{fig:figs1_2}Figure 1.2: R-Squared for Signigicant and non-significant simulations"}
 
 # Plotting charts for the R-Squared
 
@@ -166,53 +153,154 @@ curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
 par(mfrow=c(2,3))
 
 hist(study1_nonSignificant_1$rSquared, prob = TRUE, breaks = 25, 
-     xlab = "R-Squared when sigma is 1", main = "", border = "dodgerblue")
-x <- seq(0, 10, length = 25)    
-curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
- col = "darkorange", add = TRUE, lwd = 3)
+     xlab = "R-Squared", main = bquote("Non-significant model when" ~ sigma == .(1)), border = "dodgerblue")
+
 
 
 hist(study1_nonSignificant_5$rSquared, prob = TRUE, breaks = 25, 
-     xlab = "R-Squared when sigma is 5", main = "", border = "dodgerblue")
-x <- seq(0, 10, length = 25)    
-curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
- col = "darkorange", add = TRUE, lwd = 3)
+     xlab = "R-Squared", main = bquote("Non-significant model when" ~ sigma == .(5)), border = "dodgerblue")
+
 
 hist(study1_nonSignificant_10$rSquared, prob = TRUE, breaks = 25, 
-     xlab = "R-Squared when sigma is 10", main = "", border = "dodgerblue")
-x <- seq(0, 10, length = 25)    
-curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
- col = "darkorange", add = TRUE, lwd = 3)
+     xlab = "R-Squared", main = bquote("Non-significant model when" ~ sigma == .(10)), border = "dodgerblue")
 
 
 #charts when the model is significant
 
 hist(study1_significant_1$rSquared, prob = TRUE, breaks = 25, 
-     xlab = "R-Squared when sigma is 1", main = "", border = "dodgerblue")
-x <- seq(0, 10, length = 25)    
-curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
- col = "darkorange", add = TRUE, lwd = 3)
+     xlab = "R-Squared", main = bquote("Significant model when" ~ sigma == .(1)), border = "dodgerblue")   
 
 
 hist(study1_significant_5$rSquared, prob = TRUE, breaks = 25, 
-     xlab = "R-Squared when sigma is 5", main = "", border = "dodgerblue")
-x <- seq(0, 10, length = 25)    
-curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
- col = "darkorange", add = TRUE, lwd = 3)
+     xlab = "R-Squared", main = bquote("Significant model when" ~ sigma == .(5)), border = "dodgerblue")   
 
 hist(study1_significant_10$rSquared, prob = TRUE, breaks = 25, 
-     xlab = "R-Squared when sigma is 10", main = "", border = "dodgerblue")
-x <- seq(0, 10, length = 25)    
-curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
- col = "darkorange", add = TRUE, lwd = 3)
+     xlab = "R-Squared", main = bquote("Significant model when" ~ sigma == .(10)), border = "dodgerblue") 
+
 ```
+
+```{r figs1_3,fig.cap="\\label{fig:figs1_3}Figure 1.3: P value for Signigicant and non-significant simulations"}
+
+# Plotting charts for the R-Squared
+
+# charts when the model is not significant
+par(mfrow=c(2,3))
+
+hist(study1_nonSignificant_1$pVal, prob = TRUE, breaks = 25, 
+     xlab = "P value", main = bquote("Non-significant model when" ~ sigma == .(1)), border = "dodgerblue")
+   
+
+hist(study1_nonSignificant_5$pVal, prob = TRUE, breaks = 25, 
+     xlab = "P value", main = bquote("Non-significant model when" ~ sigma == .(5)), border = "dodgerblue")
+
+
+hist(study1_nonSignificant_10$pVal, prob = TRUE, breaks = 25, 
+     xlab = "P value", main = bquote("Non-significant model when" ~ sigma == .(10)), border = "dodgerblue")
+
+
+#charts when the model is significant
+
+hist(study1_significant_1$pVal, prob = TRUE, breaks = 25, 
+     xlab = "P value", main = bquote("Significant model when" ~ sigma == .(1)), border = "dodgerblue")   
+
+
+hist(study1_significant_5$pVal, prob = TRUE, breaks = 25, 
+     xlab = "P value", main = bquote("Significant model when" ~ sigma == .(5)), border = "dodgerblue")
+
+
+hist(study1_significant_10$pVal, prob = TRUE, breaks = 25, 
+     xlab = "P value", main = bquote("Significant model when" ~ sigma == .(10)), border = "dodgerblue")
+
+```
+
+**(D)** Discussion
+
+The regression models significance tests were able to conclude a right decision (model is significant by rejecting the null hypotheses) in each of the significant models simulations per $\sigma\ equal to the following (based on $\alpha$ value equal to 0.05):
+
+- When $\sigma$  = 1 : `r  sum(study1_significant_1$pVal < 0.05) / 2500`
+
+- When $\sigma$ = 5 : `r  sum(study1_significant_5$pVal < 0.05) / 2500`
+
+- When $\sigma$ = 10 : `r  sum(study1_significant_10$pVal < 0.05) / 2500`
+
+You can notice that we are not doing a good job when the sigma gets bigger as the model tends to be non-significant with more and more null hypotheses failed to be rejected.
+
+On the other hand, the regression models in the non-significant models were able to conclude a right decision (fail to reject the null hypotheses) in each of the non-significant models simulations per sigma equal to the following (based on $\alpha$ value equal to 0.05):
+
+- When $\sigma$ = 1 : `r  sum(study1_nonSignificant_1$pVal > 0.05) / 2500`
+
+- When $\sigma$ = 5 : `r  sum(study1_nonSignificant_5$pVal > 0.05) / 2500`
+
+- When $\sigma$ = 10 : `r  sum(study1_nonSignificant_10$pVal > 0.05) / 2500`
+
+
+
+Non-significant model true distribution for F statistic are expected be an F distribution with df1 = 3 and df2 = 21, if you check **Figure 1.1** , you will notice that simulations for the non-significant true model ( when $\beta_1$, $\beta_2$, and $\beta_3$ are 0 ) are following the same F distribution expected by the true model. This tells us that our simulations are working as expected for the non-significant models regardless of the $\sigma$ value. 
+
+Significant models true distribution on the other hand on are not supposed to follow an F distribution, we can see that this is true for the case where $\sigma$ is equal to 1, this however starts to change when $\sigma$ gets bigger as the simulations tends to get closer to an F distribution again, another indicator that the regression models are not working well.
+
+
+**Figure 1.2** shows R-Squared metric when the model is significant and non-significant for the different $\sigma$ values. As expected, regression for non-significant models should have low R-Squared values as we are not explaining the variance of the output which is true, same happened with significant models with high $\sigma$ values as noise became unexplained by our regression model among most of the simulations. 
+
+We can though see good results for the regression of significant model when $\sigma$ is 1 with R-Squared mean equal to `r mean(study1_significant_1$pVal)`, a low value that indicates we mostly reject.
+
+Finally, as expected, and in accordance with the previous results, p-value in **Figure 1.3** for the significant model simulations is very low when $\sigma$ was equal to 1, which means null hypotheses was consistently rejected. This started to change when $\sigma$ gets bigger as we weren't able to reject the same amount of null hypotheses. Non-significant models p-value are kind of uniformly distributed, which means a lot of different values were picked, and null hypotheses was frequently rejectedaccepted as desired.
+
+*Conclusion
+  + Significantce of regression test was proven to be successful with non-significant models (fail to reject null hyotheses most of the time)
+  + Significantce of regression test was proven to be successful with significant models (reject null hyotheses most of the time) when $\sigma$ = 1, and wasn't that successful when the noise got higher
+  + F statistic follows an F distribution for the non-significant models, and seemed to follow it as well in the significant model when $\sigma$ got higher
+
+
 
 ## Simulation Study 2, Using RMSE for Selection?
 
 
 **(a)** Introduction
 
+In this study, we are investigating how good the RMSE metric for evaluating a model. To do so, we will assume a true linear model that we know its representation and its output follows the formula :
+\[
+Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \beta_6 x_{i6} + \epsilon_i.
+\]
 
+Our data though has 9 variables, so 3 of them has no effect on the output and thus a good model will not include them in a linear regression model as a predictor.
+
+The goal of this study is to check if RMSE metric over testing data is able to select the model with the relevant 6 predictors as the best model. 
+
+Although there are 2 ^ 9 models to consider (including null model and the expected model) based on the combinations of the variables, but we will only consider the following 9 out of them (incrementally nested):
+
+
+\[
+Y_i = \beta_0 + \beta_1 x_{i1} + \epsilon_i.
+\]
+\[
+Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \epsilon_i.
+\]
+\[
+Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \epsilon_i.
+\]
+\[
+Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \epsilon_i.
+\]
+\[
+Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \epsilon_i.
+\]
+\[
+Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \beta_6 x_{i6} + \epsilon_i.
+\]
+\[
+Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \beta_6 x_{i6} +  \beta_7 x_{i7} + \epsilon_i.
+\]
+\[
+Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \beta_6 x_{i6} + \beta_7 x_{i7} +  \beta_8 x_{i8} + \epsilon_i.
+\]
+\[
+Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \beta_6 x_{i6} + \beta_7 x_{i7} +  \beta_8 x_{i8} + \beta_9 x_{i9} + \epsilon_i.
+\]
+
+We will build simulations of our true model for the output and build linear regression models based on the mentioned 9 models and check whether our metric, RMSE test, will be able to pick the best model (the one with six predictors) most of the time. 
+
+Different $\sigma$ values will
 
 **(b)** Methods
 
@@ -310,50 +398,73 @@ study2_sigma4_models <- simulate_model(data = study2_data, simulations = 1000, s
 
 **(c)** Results
 
-```{r}
-#x11(width=9, height=20, pointsize=12) 
-par(mfrow=c(1,2))
+```{r figs2_1, fig.height=10, fig.cap="\\label{fig:figs2_1}Figure 2.1: RMSE train and RMSE test as a function of number of predictors"}
 
-plot(study2_sigma1_models$rmse_train_mean, xlab = 'Number of predictors', ylab = 'RMSE Train', lwd = 2, col = 'orange', main = 'Plot when Sigma is 1')
+###################### sigma is 1 ###################
 
-plot(study2_sigma1_models$rmse_test_mean, xlab = 'Number of predictors', ylab = 'RMSE Test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 1')
+par(mfrow=c(3,2))
 
-par(mfrow=c(1,2))
+plot(study2_sigma1_models$rmse_train_mean, xlab = 'Number of predictors', ylab = 'RMSE Train', lwd = 2, col = 'darkorange', main = 'Plot when Sigma is 1')
+
+lines(1:9, study2_sigma1_models$rmse_train_mean, lwd = 3, lty = 1, col = "darkorange")
+
+plot(study2_sigma1_models$rmse_test_mean, xlab = 'Number of predictors', ylab = 'RMSE Test', lwd = 2, col = 'darkorange', main = 'Plot when Sigma is 1')
+
+lines(1:9, study2_sigma1_models$rmse_test_mean, lwd = 3, lty = 1, col = "darkorange")
+
+###################### sigma is 2 ###################
+
+#par(mfrow=c(1,2))
 plot(study2_sigma2_models$rmse_train_mean, xlab = 'Number of predictors', ylab = 'RMSE Train', lwd = 2, col = 'orange', main = 'Plot when Sigma is 2')
+
+lines(1:9, study2_sigma2_models$rmse_train_mean, lwd = 3, lty = 1, col = "darkorange")
 
 plot(study2_sigma2_models$rmse_test_mean, xlab = 'Number of predictors', ylab = 'RMSE Test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 2')
 
-par(mfrow=c(1,2))
+lines(1:9, study2_sigma2_models$rmse_test_mean, lwd = 3, lty = 1, col = "darkorange")
+
+###################### sigma is 4 ###################
+
+#par(mfrow=c(1,2))
 plot(study2_sigma4_models$rmse_train_mean, xlab = 'Number of predictors', ylab = 'RMSE Train', lwd = 2, col = 'orange', main = 'Plot when Sigma is 4')
+
+lines(1:9, study2_sigma4_models$rmse_train_mean, lwd = 3, lty = 1, col = "darkorange")
 
 plot(study2_sigma4_models$rmse_test_mean, xlab = 'Number of predictors', ylab = 'RMSE Test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 4')
 
+lines(1:9, study2_sigma4_models$rmse_test_mean, lwd = 3, lty = 1, col = "darkorange")
 ```
 
-```{r}
-par(mfrow=c(1,2))
+```{r figs2_2, fig.cap="\\label{fig:figs2_2}Figure 2.2: Count of picked models based on best RMSE test"}
+par(mfrow=c(1,3))
 
-hist(study2_sigma1_models$best_model_train, xlab = 'Predictor Index', ylab = 'Count of total picked', lwd = 2, col = 'orange', main = 'Plot when Sigma is 1')
-
-hist(study2_sigma1_models$best_model_test, xlab = 'Predictor Index', ylab = 'Count of total picked', lwd = 2, col = 'orange', main = 'Plot when Sigma is 1')
-
-par(mfrow=c(1,2))
-
-hist(study2_sigma2_models$best_model_train, xlab = 'Predictor Index', ylab = 'Count of total picked', lwd = 2, col = 'orange', main = 'Plot when Sigma is 2')
-
-hist(study2_sigma2_models$best_model_test, xlab = 'Predictor Index', ylab = 'Count of total picked', lwd = 2, col = 'orange', main = 'Plot when Sigma is 2')
+hist(study2_sigma1_models$best_model_test, xlab = 'Predictor Index', ylab = 'Picked model based on best RMSE test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 1')
 
 
-par(mfrow=c(1,2))
+hist(study2_sigma2_models$best_model_test, xlab = 'Predictor Index', ylab = 'Picked model based on best RMSE test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 2')
 
-hist(study2_sigma4_models$best_model_train, xlab = 'Predictor Index', ylab = 'Count of total picked', lwd = 2, col = 'orange', main = 'Plot when Sigma is 4')
 
-hist(study2_sigma4_models$best_model_test, xlab = 'Predictor Index', ylab = 'Count of total picked', lwd = 2, col = 'orange', main = 'Plot when Sigma is 4')
+hist(study2_sigma4_models$best_model_test, xlab = 'Predictor Index', ylab = 'Picked model based on best RMSE test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 4')
 
 
 ```
 
 
+
+**(D)** Discussion
+
+Based on the analysis performed, RMSE train alway improves (decreases) when more predictors are used, we can see this in **Figure 2.1** which shows the average RMSE train as a function of the number of predictors. This property didn't help us in identifying the expected best model (the one with the first 6 predictors only).
+
+As a proof for this, out of the 1000 simulations, the model with the 9 predictors was picked `r sum(study2_sigma1_models$best_model_train == 9)` when $\sigma$ was 1, and `r sum(study2_sigma2_models$best_model_train == 9)` when $\sigma$ was 2 and `r sum(study2_sigma4_models$best_model_train == 9)` when $\sigma$ was 4.
+
+On the other hand, RMSE test has more interesting results, in case you were wondering if the curve is not always decreasing in **Figure 2.1** I assure you it's not, average RMSE test when number of predictors is 6 and $\sigma$ equals 1 is study2_sigma1_models$rmse_test_mean[6], while it's study2_sigma1_models$rmse_test_mean[9] when number of predictors is 9, a bit higher and thus worse RMSE metric. 
+
+**Figure 2.2** confirms these findings, model with 6 predictors was successfully picked as the best model most of the simulations when $\sigma$ is 1 and 2, however, when $\sigma$ became 4, noise affected the regression model and RMSE test wasn't enough metric to pick the best model as shown in the same figure.
+
+* Conclusion
+  + RMSE train is not sufficient to pick best models as it always decreases when there are more predictors regardless they are relevant or not
+  + RMSE test is a good metric to be used to pick the best regression model, it's able to pick a model with less number of predictors when it's more relevant to the problem at hand
+  + Noise can affect RMSE test badly
 
 ## Simulation Study 3, Power
 
@@ -394,9 +505,11 @@ simulate_model = function(sigma, sample_sizes, simulations, beta_values)
 
  # we have to ignore beta1 when it equals zero, as null hypotheses is true in this case and thus doesn't affect power formula
 beta_values <- setdiff(seq(-2,2, by = 0.1), c(0))
-  study3_sigma1_1kSims <- simulate_model(1, c(10,20,30), 1000 ,beta_values)
-  study3_sigma2_1kSims <- simulate_model(2, c(10,20,30), 1000 ,beta_values)
-  study3_sigma4_1kSims <- simulate_model(4, c(10,20,30), 1000 ,beta_values)
+study3_sigma1_1kSims <- simulate_model(1, c(10,20,30), 1000 ,beta_values)
+study3_sigma2_1kSims <- simulate_model(2, c(10,20,30), 1000 ,beta_values)
+study3_sigma4_1kSims <- simulate_model(4, c(10,20,30), 1000 ,beta_values)
+
+study3_sigma1_5kSims <- simulate_model(1, c(10,20,30), 5000 ,beta_values)
 ```
 
 
@@ -404,10 +517,76 @@ beta_values <- setdiff(seq(-2,2, by = 0.1), c(0))
 
 ```{r}
 
+########################## Drawing for sigma = 1 #############################
+plot(study3_sigma1_1kSims['10',] ~ colnames(study3_sigma1_1kSims), xlab = "Beta values",
+     ylab = "Power",
+     main = "Sample size impact on Power",
+     pch  = 20,
+     cex  = 2,
+     col  = "grey", type="n")
 
+lines(colnames(study3_sigma1_1kSims), study3_sigma1_1kSims['10',], lwd = 3, lty = 1, col = "darkorange")
 
-plot(study3_sigma1_1kSims['10',], x = colnames(study3_sigma1_1kSims))
-plot(study3_sigma1_1kSims['20',], x = colnames(study3_sigma1_1kSims))
-plot(study3_sigma1_1kSims['30',], x = colnames(study3_sigma1_1kSims))
+lines(colnames(study3_sigma1_1kSims), study3_sigma1_1kSims['20',], lwd = 3, lty = 1, col = "darkblue")
 
+lines(colnames(study3_sigma1_1kSims), study3_sigma1_1kSims['30',], lwd = 3, lty = 1, col = "darkgreen")
+
+lines(colnames(study3_sigma1_5kSims), study3_sigma1_5kSims['30',], lwd = 3, lty = 1, col = "red")
+
+legend("bottomright", c("n=10", "n=20", "n=30"),  lwd = 2,
+       col = c("darkorange", "darkblue", "darkgreen"))
+
+########################## Drawing for sigma = 2 #############################
+plot(study3_sigma2_1kSims['10',] ~ colnames(study3_sigma2_1kSims), xlab = "Beta values",
+     ylab = "Power",
+     main = "Sample size impact on Power",
+     pch  = 20,
+     cex  = 2,
+     col  = "grey", type="n")
+
+lines(colnames(study3_sigma2_1kSims), study3_sigma2_1kSims['10',], lwd = 3, lty = 1, col = "darkorange")
+
+lines(colnames(study3_sigma2_1kSims), study3_sigma2_1kSims['20',], lwd = 3, lty = 1, col = "darkblue")
+
+lines(colnames(study3_sigma2_1kSims), study3_sigma2_1kSims['30',], lwd = 3, lty = 1, col = "darkgreen")
+
+legend("bottomright", c("n=10", "n=20", "n=30"),  lwd = 2,
+       col = c("darkorange", "darkblue", "darkgreen"))
+
+########################## Drawing for sigma = 4 #############################
+plot(study3_sigma4_1kSims['10',] ~ colnames(study3_sigma4_1kSims), xlab = "Beta values",
+     ylab = "Power",
+     main = "Sample size impact on Power",
+     pch  = 20,
+     cex  = 2,
+     col  = "grey", type="n")
+
+lines(colnames(study3_sigma4_1kSims), study3_sigma4_1kSims['10',], lwd = 3, lty = 1, col = "darkorange")
+
+lines(colnames(study3_sigma4_1kSims), study3_sigma4_1kSims['20',], lwd = 3, lty = 1, col = "darkblue")
+
+lines(colnames(study3_sigma4_1kSims), study3_sigma4_1kSims['30',], lwd = 3, lty = 1, col = "darkgreen")
+
+legend("bottomright", c("n=10", "n=20", "n=30"),  lwd = 2,
+       col = c("darkorange", "darkblue", "darkgreen"))
+
+```
+
+```{r}
+
+study3_sigma_avgs <- c(mean(study3_sigma1_1kSims), mean(study3_sigma2_1kSims), mean(study3_sigma4_1kSims))
+barplot(study3_sigma_avgs, names.arg = c("sigma=1", "sigma=2", "sigma=4"), ylab = "Power average", main = 'Average power against sigma')
+
+study3_all <- rbind(study3_sigma1_1kSims, study3_sigma2_1kSims, study3_sigma4_1kSims)
+study3_beta_avgs <- apply(study3_all, c(2), mean)
+barplot(study3_beta_avgs, ylab = "Power average", main = 'Average power against beta')
+
+study3_all_n10 <- rbind(study3_sigma1_1kSims['10',], study3_sigma2_1kSims['10',], study3_sigma4_1kSims['10',])
+
+study3_all_n20 <- rbind(study3_sigma1_1kSims['20',], study3_sigma2_1kSims['20',], study3_sigma4_1kSims['20',])
+
+study3_all_n30 <- rbind(study3_sigma1_1kSims['30',], study3_sigma2_1kSims['30',], study3_sigma4_1kSims['30',])
+
+study3_n_avgs <- c(mean(study3_all_n10), mean(study3_all_n20), mean(study3_all_n30))
+barplot(study3_n_avgs, names.arg = c("n=10", "n=20", "n=30"), ylab = "Power average", main = 'Average power against sample size')
 ```
