@@ -17,20 +17,20 @@ urlcolor: cyan
 **(a)** Introduction
 
 
-In this study, I am trying to prove that the significance of regression test is a good indicator of whether a regression model is relevant or not to the data in hand.
+In this study, we are trying to prove that the significance of regression test is a good indicator of whether a regression model is relevant or not to the data at hand.
 
 To do so, data will be simulated from two different true models, one of them its output is function of all the predictors, while the other one its output is not a function of the predictors. 
 
-To make sure of the variability of data to test with, each true model will be used with different values of error variance to generate the data, also, many simulations many simulations will be generated to assess the consistency of our observations.
+To make sure of the variability of data to experiment with, each true model will be used with different values of error variance to generate the data. Also, many simulations will be generated to assess the consistency of our observations.
 
-The two models follow the below equations: 
+The two models output follow the below equations: 
 \[
 Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \epsilon_i.
 \]
 
-$\beta$ parameters have values in the significant model, namely (3,1,1,1) for the beta values respectively, while the non-significant model has  $\beta_0$ equals to 3 while the others are 0.
+$\beta$ parameters have values in the significant model, namely (3,1,1,1) for the beta values respectively, while the non-significant model has $\beta_0$ equals to 3 while the others are 0.
 
-Other parameters we are considering are sample size equal to 25, and $\sigma$ values for the error in (1,5,10). Number of simulations to be used for each model-$\sigma$ combinations are 2500.
+Other parameters we are considering are sample size, which will be fixed to 25, and $\sigma$ values for the error will be in (1,5,10). Number of simulations to be used for each model-$\sigma$ combinations are 2500 to make sure of the consistency of our simulations.
 
 
 **(b)** Methods
@@ -92,7 +92,7 @@ study1_nonSignificant_10 <- simulate_model(study1_data, 2500, 10, c(3,0,0,0))
 
 **(c)** Results
 
-```{r figs1_1,fig.cap="\\label{fig:figs1_1}Figure 1.1: F statistic for Signigicant and non-significant simulations, as well as the true expected F distribution if the model is non-significant"}
+```{r figs1_1, fig.height=8, fig.width=10,fig.cap="\\label{fig:figs1_1}Figure 1.1: F statistic for Signigicant and non-significant simulations, as well as the true expected F distribution if the model is non-significant"}
 
 # Plotting charts for the f statistic
 
@@ -100,20 +100,20 @@ study1_nonSignificant_10 <- simulate_model(study1_data, 2500, 10, c(3,0,0,0))
 par(mfrow=c(2,3))
 
 hist(study1_nonSignificant_1$fStats, prob = TRUE, breaks = 25, 
-     xlab = "F statistic", main = bquote("Non-significant model when" ~ sigma == .(1)), border = "dodgerblue")
+     xlab = "F statistic", main = bquote("Non-significant model when" ~ sigma == .(1)), border = "dodgerblue", ylim = c(0,0.8))
 x <- seq(0, 100, length = 25)    
 curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
  col = "darkorange", add = TRUE, lwd = 3)
 
 
 hist(study1_nonSignificant_5$fStats, prob = TRUE, breaks = 25, 
-     xlab = "F statistic", main = bquote("Non-significant model when" ~ sigma == .(5)), border = "dodgerblue")
+     xlab = "F statistic", main = bquote("Non-significant model when" ~ sigma == .(5)), border = "dodgerblue" , ylim = c(0,0.8))
 x <- seq(0, 10, length = 25)    
 curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
  col = "darkorange", add = TRUE, lwd = 3)
 
 hist(study1_nonSignificant_10$fStats, prob = TRUE, breaks = 25, 
-     xlab = "F statistic", main = bquote("Non-significant model when" ~ sigma == .(10)), border = "dodgerblue")
+     xlab = "F statistic", main = bquote("Non-significant model when" ~ sigma == .(10)), border = "dodgerblue" , ylim = c(0,0.8))
 x <- seq(0, 10, length = 25)    
 curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
  col = "darkorange", add = TRUE, lwd = 3)
@@ -145,7 +145,7 @@ curve(df(x, df1 = 3, df2 = nrow(study1_data) - 4  ),
 
 
 
-```{r figs1_2,fig.cap="\\label{fig:figs1_2}Figure 1.2: R-Squared for Signigicant and non-significant simulations"}
+```{r figs1_2, fig.height=8, fig.width=10,fig.cap="\\label{fig:figs1_2}Figure 1.2: R-Squared for Signigicant and non-significant simulations"}
 
 # Plotting charts for the R-Squared
 
@@ -179,7 +179,7 @@ hist(study1_significant_10$rSquared, prob = TRUE, breaks = 25,
 
 ```
 
-```{r figs1_3,fig.cap="\\label{fig:figs1_3}Figure 1.3: P value for Signigicant and non-significant simulations"}
+```{r figs1_3, fig.height=8, fig.width=10,fig.cap="\\label{fig:figs1_3}Figure 1.3: P value for Signigicant and non-significant simulations"}
 
 # Plotting charts for the R-Squared
 
@@ -215,41 +215,44 @@ hist(study1_significant_10$pVal, prob = TRUE, breaks = 25,
 
 **(D)** Discussion
 
-The regression models significance tests were able to conclude a right decision (model is significant by rejecting the null hypotheses) in each of the significant models simulations per $\sigma\ equal to the following (based on $\alpha$ value equal to 0.05):
+The regression models significance tests were able to conclude a right decision (model is significant by rejecting the null hypotheses) in each of the significant models simulations per $\sigma$ equal to the following (based on $\alpha$ value equal to 0.05):
 
-- When $\sigma$  = 1 : `r  sum(study1_significant_1$pVal < 0.05) / 2500`
+- When $\sigma$ = 1 : `r  100 * (sum(study1_significant_1$pVal < 0.05) / 2500)`%
 
-- When $\sigma$ = 5 : `r  sum(study1_significant_5$pVal < 0.05) / 2500`
+- When $\sigma$ = 5 : `r   100 * (sum(study1_significant_5$pVal < 0.05) / 2500)`%
 
-- When $\sigma$ = 10 : `r  sum(study1_significant_10$pVal < 0.05) / 2500`
+- When $\sigma$ = 10 : `r  100 * (sum(study1_significant_10$pVal < 0.05) / 2500)`%
 
 You can notice that we are not doing a good job when the sigma gets bigger as the model tends to be non-significant with more and more null hypotheses failed to be rejected.
 
 On the other hand, the regression models in the non-significant models were able to conclude a right decision (fail to reject the null hypotheses) in each of the non-significant models simulations per sigma equal to the following (based on $\alpha$ value equal to 0.05):
 
-- When $\sigma$ = 1 : `r  sum(study1_nonSignificant_1$pVal > 0.05) / 2500`
+- When $\sigma$ = 1 : `r  100 * (sum(study1_nonSignificant_1$pVal > 0.05) / 2500)`%
 
-- When $\sigma$ = 5 : `r  sum(study1_nonSignificant_5$pVal > 0.05) / 2500`
+- When $\sigma$ = 5 : `r  100 * (sum(study1_nonSignificant_5$pVal > 0.05) / 2500)`%
 
-- When $\sigma$ = 10 : `r  sum(study1_nonSignificant_10$pVal > 0.05) / 2500`
-
-
-
-Non-significant model true distribution for F statistic are expected be an F distribution with df1 = 3 and df2 = 21, if you check **Figure 1.1** , you will notice that simulations for the non-significant true model ( when $\beta_1$, $\beta_2$, and $\beta_3$ are 0 ) are following the same F distribution expected by the true model. This tells us that our simulations are working as expected for the non-significant models regardless of the $\sigma$ value. 
-
-Significant models true distribution on the other hand on are not supposed to follow an F distribution, we can see that this is true for the case where $\sigma$ is equal to 1, this however starts to change when $\sigma$ gets bigger as the simulations tends to get closer to an F distribution again, another indicator that the regression models are not working well.
+- When $\sigma$ = 10 : `r  100 * (sum(study1_nonSignificant_10$pVal > 0.05) / 2500)`%
 
 
-**Figure 1.2** shows R-Squared metric when the model is significant and non-significant for the different $\sigma$ values. As expected, regression for non-significant models should have low R-Squared values as we are not explaining the variance of the output which is true, same happened with significant models with high $\sigma$ values as noise became unexplained by our regression model among most of the simulations. 
 
-We can though see good results for the regression of significant model when $\sigma$ is 1 with R-Squared mean equal to `r mean(study1_significant_1$pVal)`, a low value that indicates we mostly reject.
+Non-significant model true distribution for F statistic are expected be an F distribution with df1 = 3 and df2 = 21, if you check **Figure 1.1** , you will notice that simulations for the non-significant true model (shown in blue) are following the same F distribution expected by the true model (shown in Orange). This tells us that our simulations are working as expected for the non-significant models regardless of the $\sigma$ value. 
 
-Finally, as expected, and in accordance with the previous results, p-value in **Figure 1.3** for the significant model simulations is very low when $\sigma$ was equal to 1, which means null hypotheses was consistently rejected. This started to change when $\sigma$ gets bigger as we weren't able to reject the same amount of null hypotheses. Non-significant models p-value are kind of uniformly distributed, which means a lot of different values were picked, and null hypotheses was frequently rejectedaccepted as desired.
+Significant models true distribution on the other hand are not supposed to follow an F distribution, we can see that this is true for the case where $\sigma$ is equal to 1, this however starts to change when $\sigma$ gets bigger as the simulations tends to get closer to an F distribution, another indicator that the regression models are not working well when $\sigma$ is getting higher.
 
-*Conclusion
-  + Significantce of regression test was proven to be successful with non-significant models (fail to reject null hyotheses most of the time)
-  + Significantce of regression test was proven to be successful with significant models (reject null hyotheses most of the time) when $\sigma$ = 1, and wasn't that successful when the noise got higher
-  + F statistic follows an F distribution for the non-significant models, and seemed to follow it as well in the significant model when $\sigma$ got higher
+
+**Figure 1.2** shows R-Squared metric when the model is significant and non-significant for the different $\sigma$ values. As expected, regression for non-significant models should have low R-Squared values as we are not explaining the variance of the output, which is true. Same happened, low R-Squared values, with significant models with high $\sigma$ values as noise became unexplained by our regression models among most of the simulations. 
+
+We can though see good results for the regression of significant model when $\sigma$ is 1 with R-Squared mean equal to `r mean(study1_significant_1$rSquared)`, a high value that indicates we interpret the variance in the data pretty well.
+
+Finally, as expected, and in accordance with the previous results, p-value in **Figure 1.3** for the significant model simulations is very low when $\sigma$ was equal to 1, which means null hypotheses was consistently rejected. This started to change when $\sigma$ gets bigger as we weren't able to reject the same amount of null hypotheses. Non-significant models p-value are kind of uniformly distributed, which means a lot of different values were picked, and null hypotheses was frequently accepted as desired.
+
+**Conclusion**
+
+    * Significantce of regression test was proven to be successful with non-significant models (fail to reject null hyotheses most of the time)
+    * Significantce of regression test was proven to be successful with significant models (reject null hyotheses most of the time) when $\sigma$ = 1, and wasn't that successful when the noise got higher
+    * F statistic follows an F distribution for the non-significant models, and seemed to follow it as well in the significant model when $\sigma$ gets higher
+
+
 
 
 
@@ -263,48 +266,32 @@ In this study, we are investigating how good the RMSE metric for evaluating a mo
 Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \beta_6 x_{i6} + \epsilon_i.
 \]
 
-Our data though has 9 variables, so 3 of them has no effect on the output and thus a good model will not include them in a linear regression model as a predictor.
+Our data though has 9 variables, so 3 of them has no effect on the output and thus a good model will not include them in a linear regression model as predictors.
 
 The goal of this study is to check if RMSE metric over testing data is able to select the model with the relevant 6 predictors as the best model. 
 
 Although there are 2 ^ 9 models to consider (including null model and the expected model) based on the combinations of the variables, but we will only consider the following 9 out of them (incrementally nested):
 
 
-\[
-Y_i = \beta_0 + \beta_1 x_{i1} + \epsilon_i.
-\]
-\[
-Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \epsilon_i.
-\]
-\[
-Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \epsilon_i.
-\]
-\[
-Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \epsilon_i.
-\]
-\[
-Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \epsilon_i.
-\]
-\[
-Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \beta_6 x_{i6} + \epsilon_i.
-\]
-\[
-Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \beta_6 x_{i6} +  \beta_7 x_{i7} + \epsilon_i.
-\]
-\[
-Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \beta_6 x_{i6} + \beta_7 x_{i7} +  \beta_8 x_{i8} + \epsilon_i.
-\]
-\[
-Y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \beta_4 x_{i4} + \beta_5 x_{i5} + \beta_6 x_{i6} + \beta_7 x_{i7} +  \beta_8 x_{i8} + \beta_9 x_{i9} + \epsilon_i.
-\]
+    + Model1 : x1 predictor --> 1 predictor
+    + Model2 : x1, x2 predictors --> 2 predictor
+    + Model3 : x1, x2, x3 predictorsr --> 3 predictor
+    + Model4 : x1, x2, x3, x4 predictors --> 4 predictor
+    + Model5 : x1, x2, x3, x4, x5 predictors --> 5 predictor
+    + Model6 : x1, x2, x3, x4, x5, x6 predictors --> 6 predictor
+    + Model7 : x1, x2, x3, x4, x5, x6, x7 predictors --> 7 predictor
+    + Model8 : x1, x2, x3, x4, x5, x6, x7, x8 predictors --> 8 predictor
+    + Model9 : x1, x2, x3, x4, x5, x6, x7, x8, x9 predictors --> 9 predictor
 
 We will build simulations of our true model for the output and build linear regression models based on the mentioned 9 models and check whether our metric, RMSE test, will be able to pick the best model (the one with six predictors) most of the time. 
 
-Different $\sigma$ values will
+Different $\sigma$ values will be considered to assess the consistency of our metric.
 
 **(b)** Methods
 
 ```{r}
+birthday = 19850322
+set.seed(birthday)
 setwd(".\\")
 study2_data <- read.csv("study_2.csv", header = TRUE, sep = ",")
 
@@ -404,33 +391,33 @@ study2_sigma4_models <- simulate_model(data = study2_data, simulations = 1000, s
 
 par(mfrow=c(3,2))
 
-plot(study2_sigma1_models$rmse_train_mean, xlab = 'Number of predictors', ylab = 'RMSE Train', lwd = 2, col = 'darkorange', main = 'Plot when Sigma is 1')
+plot(study2_sigma1_models$rmse_train_mean, xlab = 'Model/Number of predictors', ylab = 'RMSE Train', lwd = 2, col = 'darkorange', main = 'Plot when Sigma is 1')
 
 lines(1:9, study2_sigma1_models$rmse_train_mean, lwd = 3, lty = 1, col = "darkorange")
 
-plot(study2_sigma1_models$rmse_test_mean, xlab = 'Number of predictors', ylab = 'RMSE Test', lwd = 2, col = 'darkorange', main = 'Plot when Sigma is 1')
+plot(study2_sigma1_models$rmse_test_mean, xlab = 'Model/Number of predictors', ylab = 'RMSE Test', lwd = 2, col = 'darkorange', main = 'Plot when Sigma is 1')
 
 lines(1:9, study2_sigma1_models$rmse_test_mean, lwd = 3, lty = 1, col = "darkorange")
 
 ###################### sigma is 2 ###################
 
 #par(mfrow=c(1,2))
-plot(study2_sigma2_models$rmse_train_mean, xlab = 'Number of predictors', ylab = 'RMSE Train', lwd = 2, col = 'orange', main = 'Plot when Sigma is 2')
+plot(study2_sigma2_models$rmse_train_mean, xlab = 'Model/Number of predictors', ylab = 'RMSE Train', lwd = 2, col = 'orange', main = 'Plot when Sigma is 2')
 
 lines(1:9, study2_sigma2_models$rmse_train_mean, lwd = 3, lty = 1, col = "darkorange")
 
-plot(study2_sigma2_models$rmse_test_mean, xlab = 'Number of predictors', ylab = 'RMSE Test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 2')
+plot(study2_sigma2_models$rmse_test_mean, xlab = 'Model/Number of predictors', ylab = 'RMSE Test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 2')
 
 lines(1:9, study2_sigma2_models$rmse_test_mean, lwd = 3, lty = 1, col = "darkorange")
 
 ###################### sigma is 4 ###################
 
 #par(mfrow=c(1,2))
-plot(study2_sigma4_models$rmse_train_mean, xlab = 'Number of predictors', ylab = 'RMSE Train', lwd = 2, col = 'orange', main = 'Plot when Sigma is 4')
+plot(study2_sigma4_models$rmse_train_mean, xlab = 'Model/Number of predictors', ylab = 'RMSE Train', lwd = 2, col = 'orange', main = 'Plot when Sigma is 4')
 
 lines(1:9, study2_sigma4_models$rmse_train_mean, lwd = 3, lty = 1, col = "darkorange")
 
-plot(study2_sigma4_models$rmse_test_mean, xlab = 'Number of predictors', ylab = 'RMSE Test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 4')
+plot(study2_sigma4_models$rmse_test_mean, xlab = 'Model/Number of predictors', ylab = 'RMSE Test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 4')
 
 lines(1:9, study2_sigma4_models$rmse_test_mean, lwd = 3, lty = 1, col = "darkorange")
 ```
@@ -438,13 +425,13 @@ lines(1:9, study2_sigma4_models$rmse_test_mean, lwd = 3, lty = 1, col = "darkora
 ```{r figs2_2, fig.cap="\\label{fig:figs2_2}Figure 2.2: Count of picked models based on best RMSE test"}
 par(mfrow=c(1,3))
 
-hist(study2_sigma1_models$best_model_test, xlab = 'Predictor Index', ylab = 'Picked model based on best RMSE test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 1')
+hist(study2_sigma1_models$best_model_test, xlab = 'Model Index', ylab = 'Picked model based on best RMSE test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 1')
 
 
-hist(study2_sigma2_models$best_model_test, xlab = 'Predictor Index', ylab = 'Picked model based on best RMSE test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 2')
+hist(study2_sigma2_models$best_model_test, xlab = 'Model Index', ylab = 'Picked model based on best RMSE test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 2')
 
 
-hist(study2_sigma4_models$best_model_test, xlab = 'Predictor Index', ylab = 'Picked model based on best RMSE test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 4')
+hist(study2_sigma4_models$best_model_test, xlab = 'Model Index', ylab = 'Picked model based on best RMSE test', lwd = 2, col = 'orange', main = 'Plot when Sigma is 4')
 
 
 ```
@@ -455,26 +442,42 @@ hist(study2_sigma4_models$best_model_test, xlab = 'Predictor Index', ylab = 'Pic
 
 Based on the analysis performed, RMSE train alway improves (decreases) when more predictors are used, we can see this in **Figure 2.1** which shows the average RMSE train as a function of the number of predictors. This property didn't help us in identifying the expected best model (the one with the first 6 predictors only).
 
-As a proof for this, out of the 1000 simulations, the model with the 9 predictors was picked `r sum(study2_sigma1_models$best_model_train == 9)` when $\sigma$ was 1, and `r sum(study2_sigma2_models$best_model_train == 9)` when $\sigma$ was 2 and `r sum(study2_sigma4_models$best_model_train == 9)` when $\sigma$ was 4.
+As a proof for this, out of the 1000 simulations, the model with the 9 predictors was picked `r sum(study2_sigma1_models$best_model_train == 9)` when $\sigma$ was 1, and `r sum(study2_sigma2_models$best_model_train == 9)` when $\sigma$ was 2 and `r sum(study2_sigma4_models$best_model_train == 9)` when $\sigma$ was 4 if we are to use RMSE train for selection.
 
-On the other hand, RMSE test has more interesting results, in case you were wondering if the curve is not always decreasing in **Figure 2.1** I assure you it's not, average RMSE test when number of predictors is 6 and $\sigma$ equals 1 is study2_sigma1_models$rmse_test_mean[6], while it's study2_sigma1_models$rmse_test_mean[9] when number of predictors is 9, a bit higher and thus worse RMSE metric. 
+On the other hand, RMSE test has more interesting results, in case you were wondering if the curve is not always decreasing in **Figure 2.1** I assure you it's not, average RMSE test when number of predictors is 6 and $\sigma$ equals 1 is `r study2_sigma1_models$rmse_test_mean[6]`, while it's `r study2_sigma1_models$rmse_test_mean[9]` when number of predictors is 9, a bit higher and thus worse RMSE metric value. 
 
-**Figure 2.2** confirms these findings, model with 6 predictors was successfully picked as the best model most of the simulations when $\sigma$ is 1 and 2, however, when $\sigma$ became 4, noise affected the regression model and RMSE test wasn't enough metric to pick the best model as shown in the same figure.
+**Figure 2.2** confirms these findings, model with 6 predictors was successfully picked as the best model most of the simulations when $\sigma$ is 1 and 2, however, when $\sigma$ became 4, noise affected the regression model and selection on RMSE test wasn't as stable metric to pick the best model as it was before.
 
-* Conclusion
-  + RMSE train is not sufficient to pick best models as it always decreases when there are more predictors regardless they are relevant or not
-  + RMSE test is a good metric to be used to pick the best regression model, it's able to pick a model with less number of predictors when it's more relevant to the problem at hand
-  + Noise can affect RMSE test badly
+**Conclusion**
+
+    * RMSE train is not sufficient to pick best models as it always decreases when there are more predictors regardless they are relevant or not
+    * RMSE test is a good metric to be used to pick the best regression model, it's able to pick a model with less number of predictors when it's more relevant to the problem at hand
+    * Noise can affect RMSE test as the data becomes more stochastic
+
 
 ## Simulation Study 3, Power
 
 
 **(a)** Introduction
 
+In this study, we are investigating the impact of different factors on the power of the significance of regression test, these factors are sample size, $\beta$ values (how big its absolute value), and noise level $\sigma$.
+
+In order to do so, we will run simulations with different values of these factors and see how the power of the significance test gets affected as a function of the different factors. 
+
+The model we are building has only 1 predictor with values in the range [-2,2] with a step size equal to 0.1. Note that model when $\beta$ equals to 0 is not taken into consideration as it doesn't affect the power equation known as :
+
+Power = P[Reject H0 | H1 True]
+
+Surely, H1, the alternative hypotheses, is not true when $\beta$ value is 0.
+
+As for the $\sigma$ values, we will simulate data with values equal to 1, 2, and 4, while sample size to experiment with will take the values 10, 20, and 30.
+
 **(b)** Methods
 
 ```{r}
 
+birthday = 19850322
+set.seed(birthday)
 
 simulate_model = function(sigma, sample_sizes, simulations, beta_values)
 {
@@ -488,15 +491,17 @@ simulate_model = function(sigma, sample_sizes, simulations, beta_values)
    
     for( beta1 in beta_values )
     {
-      total_rejected <- 0
-      for(i in 1:simulations)
-      {
-        y <- (x_values * beta1) + rnorm(n , 0, sigma)
-        if(summary(lm(y ~ x_values))$coefficients[2,4] < 0.05) #reject null
-          total_rejected <- total_rejected + 1
-      }
+      # same y value for all simulations without noise, different noise will be added in each record for each simulation
+      base_y <- (x_values * beta1)
+      # after this, each data set/simulation will be represented in a row
+      simulation_vectors <- t(replicate(simulations, base_y))
+      # add noise to each element, it's one sigma anyway
+      noise_matrix <- rnorm(n * simulations , 0, sigma)
+      noise_matrix <- matrix(noise_matrix, nrow = simulations, ncol = n)
+      simulation_vectors <- simulation_vectors + noise_matrix
+      simulations_p_values <- apply(simulation_vectors, 1, function(x) summary(lm(x ~ x_values))$coefficients[2,4])
       
-      power_result[as.character(n), as.character(beta1)] <- total_rejected / simulations
+      power_result[as.character(n), as.character(beta1)] <- (sum(simulations_p_values < 0.05 )) / simulations
     }
   }
   
@@ -505,22 +510,29 @@ simulate_model = function(sigma, sample_sizes, simulations, beta_values)
 
  # we have to ignore beta1 when it equals zero, as null hypotheses is true in this case and thus doesn't affect power formula
 beta_values <- setdiff(seq(-2,2, by = 0.1), c(0))
+print("Processing sigma 1 data")
 study3_sigma1_1kSims <- simulate_model(1, c(10,20,30), 1000 ,beta_values)
+print("Processing sigma 2 data")
 study3_sigma2_1kSims <- simulate_model(2, c(10,20,30), 1000 ,beta_values)
+print("Processing sigma 4 data")
 study3_sigma4_1kSims <- simulate_model(4, c(10,20,30), 1000 ,beta_values)
 
-study3_sigma1_5kSims <- simulate_model(1, c(10,20,30), 5000 ,beta_values)
+print("Processing different simulations numbers data")
+study3_sigma1_2kSims <- simulate_model(1, c(10), 2000 ,beta_values)
+study3_sigma1_100Sims <- simulate_model(1, c(10), 100 ,beta_values)
 ```
 
 
 **(c)** Results
 
-```{r}
+```{r figs3_1, fig.height=5, fig.width=10, fig.cap="\\label{fig:figs3_1}Figure 3.1: Power curve as a function of sigma, sample size, and beta values"}
 
 ########################## Drawing for sigma = 1 #############################
+par(mfrow=c(1,3))
+
 plot(study3_sigma1_1kSims['10',] ~ colnames(study3_sigma1_1kSims), xlab = "Beta values",
      ylab = "Power",
-     main = "Sample size impact on Power",
+     main = bquote("Power curve when " ~ sigma == .(1)),
      pch  = 20,
      cex  = 2,
      col  = "grey", type="n")
@@ -531,7 +543,7 @@ lines(colnames(study3_sigma1_1kSims), study3_sigma1_1kSims['20',], lwd = 3, lty 
 
 lines(colnames(study3_sigma1_1kSims), study3_sigma1_1kSims['30',], lwd = 3, lty = 1, col = "darkgreen")
 
-lines(colnames(study3_sigma1_5kSims), study3_sigma1_5kSims['30',], lwd = 3, lty = 1, col = "red")
+#lines(colnames(study3_sigma1_5kSims), study3_sigma1_5kSims['30',], lwd = 3, lty = 1, col = "red")
 
 legend("bottomright", c("n=10", "n=20", "n=30"),  lwd = 2,
        col = c("darkorange", "darkblue", "darkgreen"))
@@ -539,7 +551,7 @@ legend("bottomright", c("n=10", "n=20", "n=30"),  lwd = 2,
 ########################## Drawing for sigma = 2 #############################
 plot(study3_sigma2_1kSims['10',] ~ colnames(study3_sigma2_1kSims), xlab = "Beta values",
      ylab = "Power",
-     main = "Sample size impact on Power",
+     main = bquote("Power curve when " ~ sigma == .(2)),
      pch  = 20,
      cex  = 2,
      col  = "grey", type="n")
@@ -556,7 +568,7 @@ legend("bottomright", c("n=10", "n=20", "n=30"),  lwd = 2,
 ########################## Drawing for sigma = 4 #############################
 plot(study3_sigma4_1kSims['10',] ~ colnames(study3_sigma4_1kSims), xlab = "Beta values",
      ylab = "Power",
-     main = "Sample size impact on Power",
+     main = bquote("Power curve when " ~ sigma == .(4)),
      pch  = 20,
      cex  = 2,
      col  = "grey", type="n")
@@ -572,14 +584,15 @@ legend("bottomright", c("n=10", "n=20", "n=30"),  lwd = 2,
 
 ```
 
-```{r}
+```{r figs3_2, fig.height=5, fig.width=10, fig.cap="\\label{fig:figs3_2}Figure 3.2: Avergae Power as a function of sigma, sample size, and beta values separately"}
 
+par(mfrow=c(1,3))
 study3_sigma_avgs <- c(mean(study3_sigma1_1kSims), mean(study3_sigma2_1kSims), mean(study3_sigma4_1kSims))
-barplot(study3_sigma_avgs, names.arg = c("sigma=1", "sigma=2", "sigma=4"), ylab = "Power average", main = 'Average power against sigma')
+barplot(study3_sigma_avgs, names.arg = c("sigma=1", "sigma=2", "sigma=4"), ylab = "Power average", xlab = expression(sigma), main = 'Average power against sigma', col = "darkgreen")
 
 study3_all <- rbind(study3_sigma1_1kSims, study3_sigma2_1kSims, study3_sigma4_1kSims)
 study3_beta_avgs <- apply(study3_all, c(2), mean)
-barplot(study3_beta_avgs, ylab = "Power average", main = 'Average power against beta')
+barplot(study3_beta_avgs, ylab = "Power average", xlab = expression(beta), main = 'Average power against beta', col = "darkorange")
 
 study3_all_n10 <- rbind(study3_sigma1_1kSims['10',], study3_sigma2_1kSims['10',], study3_sigma4_1kSims['10',])
 
@@ -588,5 +601,45 @@ study3_all_n20 <- rbind(study3_sigma1_1kSims['20',], study3_sigma2_1kSims['20',]
 study3_all_n30 <- rbind(study3_sigma1_1kSims['30',], study3_sigma2_1kSims['30',], study3_sigma4_1kSims['30',])
 
 study3_n_avgs <- c(mean(study3_all_n10), mean(study3_all_n20), mean(study3_all_n30))
-barplot(study3_n_avgs, names.arg = c("n=10", "n=20", "n=30"), ylab = "Power average", main = 'Average power against sample size')
+barplot(study3_n_avgs, names.arg = c("n=10", "n=20", "n=30"), ylab = "Power average", xlab = 'Sample size', main = 'Average power against sample size' , col = "darkblue")
 ```
+
+```{r figs3_3, fig.height=5, fig.cap="\\label{fig:figs3_3}Figure 3.3: Power curve as a function of number of simulations"}
+
+plot(study3_sigma1_1kSims['10',] ~ colnames(study3_sigma1_1kSims), xlab = "Beta values",
+     ylab = "Power",
+     main = bquote("Power curve when sample size is 10 and " ~ sigma == .(1)),
+     pch  = 20,
+     cex  = 2,
+     col  = "grey", type="n")
+
+lines(colnames(study3_sigma1_1kSims), study3_sigma1_1kSims['10',], lwd = 3, lty = 1, col = "darkorange")
+
+lines(colnames(study3_sigma1_2kSims), study3_sigma1_2kSims['10',], lwd = 3, lty = 1, col = "darkblue")
+
+lines(colnames(study3_sigma1_100Sims), study3_sigma1_100Sims['10',], lwd = 3, lty = 1, col = "red")
+
+legend("bottomright", c("Simulations=1000", "Simulations=2000", "Simulations=100"),  lwd = 2,
+       col = c("darkorange", "darkblue", "red"))
+```
+**(D)** Discussion
+ 
+**Figure 3.1** shows the impact of the different factors on the power curve, regardless of $\sigma$ value, power gets lower when the absolute value of $\beta$ decreases, in other words, when it gets closer to 0. This can be shown in the 3 curves. 
+
+Also, sample size has an impact on the power, the bigger the sample size, the better its power curve. Same figure shows that curves with bigger sample size stays on 1 value with more $\beta$ values and in worst case don't go as low as their corresponding curves (curves with same $\sigma$ and $\beta$).
+
+As for $\sigma$ impact, it goes to the other direction, a higher $\sigma$ leads to more noise and thus to less confident models with worse power curve. For example, Curve on the right on **Figure 3.1**, which has $\sigma$ equals to 4, has a maximum power value less than 0.7 unlike the curve on the left which has $\sigma$ equals 1. It also goes faster to lower values of power.
+
+As a confirmation for these findings, **Figure 3.2** shows the impact of the different factors separately on the average of the power. From the left, bigger $\sigma$ causes lower power regardless of the other factors, and then in the second bar chart, as $\beta$ value approaches 0 power decreases, and finally, the right chart shows the sample size impact, which causes better average power when it increases.
+
+As a final investigation on the other factors, or let's call it signals, that may affect the power. Intuitevly, $\alpha$ should be a factor as it's the value at which we decide whether a test is rejected or not and thus will definitely affect the power value as the equation in the introduction shows, but is the number of simulations another factor that may affect power ? 
+
+**Figure 3.3** answers this question by showing that 1000 simulations was enough to get us sufficient and stable results, that's because pushing the number of simulations to 2000 didn't affect the power curve by any means when the $\sigma$ was 1 and sample size was 10. However, if the number of simulations was 100 as shown in the chart in red, we wouldn't have gotten that stable and smooth results.
+
+**Conclusion**
+
+    * Bigger $\sigma$ has a negative impact on power
+    * As $\beta$ get closes to 0, power gets lower
+    * Bigger sample size has a positive impact on power
+    * 1000 simulations are sufficient to get consistent and reasonable results
+    
